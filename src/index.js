@@ -47,24 +47,35 @@ const getWeather = async (lat, lon) => {
 const masterFunc = async (city) => {
   await getCityLatLon(city);
   await getWeather(cityLat, cityLon);
-  createAppDataObject(weatherData);
+  createRawDataObject(weatherData);
+  console.log(cityRawWeatherData.currentDescrip);
+  refineDataObject(cityRawWeatherData);
 };
 
 masterFunc("Tbilisi");
 
-const createAppDataObject = (weatherData) => {
-  let cityWeatherData = new AppData(
+let cityRawWeatherData;
+const createRawDataObject = (weatherData) => {
+  cityRawWeatherData = new RawAppData(
+    weatherData.current.dt,
     weatherData.current.temp,
     weatherData.current.feels_like,
     weatherData.current.weather[0].description,
-    weatherData.current.wind_speed
+    weatherData.current.wind_speed,
+    weatherData.daily[1].temp.day,
+    weatherData.daily[1].weather[0].description,
+    weatherData.daily[2].temp.day,
+    weatherData.daily[2].weather[0].description
   );
   // const currentTemp = weatherData.current.temp;
-  console.log(cityWeatherData);
+  console.log(cityRawWeatherData);
+  console.log(cityRawWeatherData.currentTime);
+  console.log(cityRawWeatherData.roundNumber(cityRawWeatherData.currentTemp));
 };
 
-class AppData {
+class RawAppData {
   constructor(
+    currentTime,
     currentTemp,
     feelsLike,
     currentDescrip,
@@ -75,6 +86,7 @@ class AppData {
     nextDayDescrip
   ) {
     // this.city = city;
+    this.currentTime = currentTime;
     this.currentTemp = currentTemp;
     this.feelsLike = feelsLike;
     this.currentDescrip = currentDescrip;
@@ -84,4 +96,37 @@ class AppData {
     this.nextDayTemp = nextDayTemp;
     this.nextDayDescrip = nextDayDescrip;
   }
+  roundNumber(number) {
+    return Math.round(number);
+  }
 }
+
+// functions to refine data
+
+const makeRoundNumber = (data) => {
+  return Math.round(data);
+};
+
+let refinedAppData = {};
+const refineDataObject = (cityRawWeatherData) => {
+  const localTime = new Date(cityRawWeatherData.currentTime);
+  refinedAppData.currentTime = localTime;
+  const currentTemp = makeRoundNumber(cityRawWeatherData.currentTemp);
+  refinedAppData.currentTemp = currentTemp;
+  const feelsLike = makeRoundNumber(cityRawWeatherData.feelsLike);
+  refinedAppData.feelsLike = feelsLike;
+  refinedAppData.currentDescrip = cityRawWeatherData.currentDescrip;
+  //need to capitalize letters
+  const tomorrowDate = new Date(weatherData.daily[1].dt); //? maybe don't need the cityRawWeatherData object at all?
+  refinedAppData.tomorrowDate = tomorrowDate;
+  const tomorrowTemp = makeRoundNumber(cityRawWeatherData.tomorrowTemp);
+  refinedAppData.tomorrowTemp = tomorrowTemp;
+  refinedAppData.tomorrowDescrip = cityRawWeatherData.tomorrowDescrip;
+  const nextDayDate = new Date(weatherData.daily[2].dt);
+  refinedAppData.nextDayDate = nextDayDate;
+  const nextDayTemp = makeRoundNumber(cityRawWeatherData.nextDayTemp);
+  refinedAppData.nextDayTemp = nextDayTemp;
+  refinedAppData.nextDayDescrip = cityRawWeatherData.nextDayDescrip;
+
+  console.log(refinedAppData);
+};
