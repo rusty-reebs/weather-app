@@ -1,4 +1,5 @@
 import "./styles/style.css";
+import { renderHome } from "./home";
 
 let cityLat;
 let cityLon;
@@ -30,6 +31,8 @@ const getWeather = async (lat, lon) => {
   weatherData = await response.json();
   console.log(weatherData);
 };
+
+renderHome();
 
 const masterFunc = async (city) => {
   await getCityLatLon(city);
