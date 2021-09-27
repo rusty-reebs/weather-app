@@ -2,9 +2,13 @@
 
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
+  height: 100vh;
+  overflow: auto;
   background: #56ccf2; /* fallback for old browsers */
   background: -webkit-linear-gradient(
     to left,
@@ -16,6 +20,79 @@ body {
     #2f80ed,
     #56ccf2
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  font-family: "Open Sans", sans-serif;
+  color: white;
+}
+
+.container {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  height: auto;
+}
+.upper {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+form {
+  grid-row: 1;
+  width: auto;
+  margin: auto;
+}
+
+.searchbar {
+  font-size: 30px;
+  grid-row: 1;
+  width: auto;
+  margin: auto;
+}
+
+.date {
+  color: white;
+  font-size: 20px;
+  grid-row: 2;
+  justify-content: left;
+}
+
+.city {
+  color: white;
+  font-size: 28px;
+  grid-row: 3;
+}
+
+.lower {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+}
+/* not sure */
+h4 {
+  font-size: 20px;
+}
+/* not sure */
+p {
+  font-size: 18px;
+}
+
+.temp {
+  grid-row: 1;
+  grid-column: 1;
+  font-size: 32px;
+}
+
+.descrip {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.tomorrow {
+  grid-row: 3;
+  grid-column: 1;
+}
+
+.nextday {
+  grid-row: 3;
+  grid-column: 2;
 }
 
 @media only screen and (min-width: 768px) {

@@ -1,5 +1,13 @@
 import "./styles/style.css";
 import { renderHome } from "./home";
+import {
+  city,
+  currentTemp,
+  feelsLike,
+  currentDescrip,
+  windSpeed,
+} from "./home";
+import { tomorrowTemp, tomorrowDate, nextDayTemp, nextDayDate } from "./home";
 
 let cityLat;
 let cityLon;
@@ -34,13 +42,22 @@ const getWeather = async (lat, lon) => {
 
 renderHome();
 
-const masterFunc = async (city) => {
-  await getCityLatLon(city);
+const masterFunc = async (cityname) => {
+  await getCityLatLon(cityname);
   await getWeather(cityLat, cityLon);
   refineDataObject();
+  city.innerHTML = cityname;
+  currentTemp.innerHTML = refinedAppData.currentTemp + " C";
+  feelsLike.innerHTML = "Feels like " + refinedAppData.feelsLike + " C";
+  currentDescrip.innerHTML = refinedAppData.currentDescrip;
+  windSpeed.innerHTML = "Wind " + refinedAppData.windSpeed + " km/h";
+  tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + " C";
+  tomorrowDate.innerHTML = refinedAppData.tomorrowDate;
+  nextDayTemp.innerHTML = refinedAppData.nextDayTemp + " C";
+  nextDayDate.innerHTML = refinedAppData.nextDayDate;
 };
 
-masterFunc("Tbilisi");
+masterFunc("Medellin");
 
 // functions to refine data
 
