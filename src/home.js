@@ -4,6 +4,7 @@ const date = document.createElement("h3");
 const currentTemp = document.createElement("h1");
 const feelsLike = document.createElement("p");
 const currentDescrip = document.createElement("h4");
+const currentDescripPic = document.createElement("img");
 const windSpeed = document.createElement("h4");
 const tomorrowTemp = document.createElement("h4");
 const tomorrowDate = document.createElement("h4");
@@ -35,23 +36,35 @@ const renderHome = () => {
   lowerDiv.classList.add("lower");
   const currentTempDiv = document.createElement("div");
   currentTempDiv.classList.add("temp");
+  feelsLike.classList.add("feelslike");
   currentTempDiv.appendChild(currentTemp);
   currentTempDiv.appendChild(feelsLike);
 
   const currentDescripDiv = document.createElement("div");
   currentDescripDiv.classList.add("descrip");
+  currentDescripPic.src = "../src/img/01d.png";
+  currentDescripPic.height = "100";
+  currentDescripDiv.appendChild(currentDescripPic);
   currentDescripDiv.appendChild(currentDescrip);
   currentDescripDiv.appendChild(windSpeed);
 
   const tomorrowDiv = document.createElement("div");
   tomorrowDiv.classList.add("tomorrow");
-  tomorrowDiv.appendChild(tomorrowTemp);
+  const tomorrowPic = document.createElement("img");
+  tomorrowPic.src = "../src/img/02d.png";
+  tomorrowPic.height = "80";
   tomorrowDiv.appendChild(tomorrowDate);
+  tomorrowDiv.appendChild(tomorrowPic);
+  tomorrowDiv.appendChild(tomorrowTemp);
 
   const nextDayDiv = document.createElement("div");
   nextDayDiv.classList.add("nextday");
-  nextDayDiv.appendChild(nextDayTemp);
+  const nextDayPic = document.createElement("img");
+  nextDayPic.src = "../src/img/02d.png";
+  nextDayPic.height = "80";
   nextDayDiv.appendChild(nextDayDate);
+  nextDayDiv.appendChild(nextDayPic);
+  nextDayDiv.appendChild(nextDayTemp);
 
   container.appendChild(upperDiv);
   upperDiv.appendChild(form);
@@ -67,4 +80,10 @@ const renderHome = () => {
 };
 
 export { renderHome, city, currentTemp, feelsLike, currentDescrip, windSpeed };
-export { tomorrowTemp, tomorrowDate, nextDayTemp, nextDayDate };
+export {
+  currentDescripPic,
+  tomorrowTemp,
+  tomorrowDate,
+  nextDayTemp,
+  nextDayDate,
+};

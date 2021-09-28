@@ -6,6 +6,7 @@ import {
   feelsLike,
   currentDescrip,
   windSpeed,
+  currentDescripPic,
 } from "./home";
 import { tomorrowTemp, tomorrowDate, nextDayTemp, nextDayDate } from "./home";
 
@@ -47,13 +48,16 @@ const masterFunc = async (cityname) => {
   await getWeather(cityLat, cityLon);
   refineDataObject();
   city.innerHTML = cityname;
-  currentTemp.innerHTML = refinedAppData.currentTemp + " C";
-  feelsLike.innerHTML = "Feels like " + refinedAppData.feelsLike + " C";
+  currentTemp.innerHTML = refinedAppData.currentTemp + "&deg;" + "C";
+  feelsLike.innerHTML =
+    "Feels like " + refinedAppData.feelsLike + "&deg;" + "C";
   currentDescrip.innerHTML = refinedAppData.currentDescrip;
-  windSpeed.innerHTML = "Wind " + refinedAppData.windSpeed + " km/h";
-  tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + " C";
-  tomorrowDate.innerHTML = refinedAppData.tomorrowDate;
-  nextDayTemp.innerHTML = refinedAppData.nextDayTemp + " C";
+  windSpeed.innerHTML = "Wind: " + refinedAppData.windSpeed + " km/h";
+  currentDescripPic.src = getImageFromId(refinedAppData.currentId);
+  tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + "&deg;" + "C";
+  // tomorrowDate.innerHTML = refinedAppData.tomorrowDate;
+  tomorrowDate.innerHTML = "Tomorrow";
+  nextDayTemp.innerHTML = refinedAppData.nextDayTemp + "&deg;" + "C";
   nextDayDate.innerHTML = refinedAppData.nextDayDate;
 };
 
@@ -91,6 +95,7 @@ const refineDataObject = () => {
     weatherData.daily[1].weather[0].description
   );
   const nextDayDate = new Date(weatherData.daily[2].dt);
+  const nextDayName = nextDayDate.getDay();
   const nextDayTemp = makeRoundNumber(weatherData.daily[2].temp.day);
   const nextDayDescripCaps = capitalizeString(
     weatherData.daily[2].weather[0].description
@@ -101,12 +106,21 @@ const refineDataObject = () => {
   refinedAppData.feelsLike = feelsLike;
   refinedAppData.currentDescrip = currentDescripCaps;
   refinedAppData.windSpeed = windSpeed;
+  refinedAppData.currentId = weatherData.current.weather[0].id;
   refinedAppData.tomorrowDate = tomorrowDate;
   refinedAppData.tomorrowTemp = tomorrowTemp;
   refinedAppData.tomorrowDescrip = tomorrowDescripCaps;
-  refinedAppData.nextDayDate = nextDayDate;
+  refinedAppData.tomorrowId = weatherData.daily[1].weather[0].id;
+  refinedAppData.nextDayDate = nextDayName;
   refinedAppData.nextDayTemp = nextDayTemp;
   refinedAppData.nextDayDescrip = nextDayDescripCaps;
+  refinedAppData.nextDayId = weatherData.daily[2].weather[0].id;
 
   console.log(refinedAppData);
+};
+
+const getImageFromId = (id) => {
+  if (id == 741) {
+    return "../src/img/50d.png";
+  }
 };
