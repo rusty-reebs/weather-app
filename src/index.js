@@ -1,6 +1,9 @@
 import "./styles/style.css";
 import { renderHome } from "./home";
 import {
+  form,
+  input,
+  date,
   city,
   currentTemp,
   feelsLike,
@@ -8,7 +11,14 @@ import {
   windSpeed,
   currentDescripPic,
 } from "./home";
-import { tomorrowTemp, tomorrowDate, nextDayTemp, nextDayDate } from "./home";
+import {
+  tomorrowTemp,
+  tomorrowDate,
+  tomorrowPic,
+  nextDayTemp,
+  nextDayDate,
+  nextDayPic,
+} from "./home";
 
 let cityLat;
 let cityLon;
@@ -43,10 +53,17 @@ const getWeather = async (lat, lon) => {
 
 renderHome();
 
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  masterFunc(input.value);
+  form.reset();
+});
+
 const masterFunc = async (cityname) => {
   await getCityLatLon(cityname);
   await getWeather(cityLat, cityLon);
   refineDataObject();
+  date.innerHTML = refinedAppData.currentTime;
   city.innerHTML = cityname;
   currentTemp.innerHTML = refinedAppData.currentTemp + "&deg;" + "C";
   feelsLike.innerHTML =
@@ -55,13 +72,12 @@ const masterFunc = async (cityname) => {
   windSpeed.innerHTML = "Wind: " + refinedAppData.windSpeed + " km/h";
   currentDescripPic.src = getImageFromId(refinedAppData.currentId);
   tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + "&deg;" + "C";
-  // tomorrowDate.innerHTML = refinedAppData.tomorrowDate;
   tomorrowDate.innerHTML = "Tomorrow";
+  tomorrowPic.src = getImageFromId(refinedAppData.tomorrowId);
   nextDayTemp.innerHTML = refinedAppData.nextDayTemp + "&deg;" + "C";
   nextDayDate.innerHTML = refinedAppData.nextDayDate;
+  nextDayPic.src = getImageFromId(refinedAppData.nextDayId);
 };
-
-masterFunc("Medellin");
 
 // functions to refine data
 
@@ -82,7 +98,8 @@ const capitalizeString = (data) => {
 let refinedAppData = {};
 
 const refineDataObject = () => {
-  const currentTime = new Date(weatherData.current.dt);
+  const currentTime = new Date(weatherData.current.dt * 1000);
+  const refinedCurrentTime = currentTime.toLocaleString();
   const currentTemp = makeRoundNumber(weatherData.current.temp);
   const feelsLike = makeRoundNumber(weatherData.current.feels_like);
   const currentDescripCaps = capitalizeString(
@@ -94,14 +111,36 @@ const refineDataObject = () => {
   const tomorrowDescripCaps = capitalizeString(
     weatherData.daily[1].weather[0].description
   );
-  const nextDayDate = new Date(weatherData.daily[2].dt);
-  const nextDayName = nextDayDate.getDay();
+  const nextDayDate = new Date(weatherData.daily[2].dt * 1000);
+  let nextDayName = nextDayDate.getDay();
+  switch (nextDayName) {
+    case 0:
+      nextDayName = "Sunday";
+      break;
+    case 1:
+      nextDayName = "Monday";
+      break;
+    case 2:
+      nextDayName = "Tuesday";
+      break;
+    case 3:
+      nextDayName = "Wednesday";
+      break;
+    case 4:
+      nextDayName = "Thursday";
+      break;
+    case 5:
+      nextDayName = "Friday";
+      break;
+    case 6:
+      nextDayName = "Saturday";
+  }
   const nextDayTemp = makeRoundNumber(weatherData.daily[2].temp.day);
   const nextDayDescripCaps = capitalizeString(
     weatherData.daily[2].weather[0].description
   );
 
-  refinedAppData.currentTime = currentTime;
+  refinedAppData.currentTime = refinedCurrentTime;
   refinedAppData.currentTemp = currentTemp;
   refinedAppData.feelsLike = feelsLike;
   refinedAppData.currentDescrip = currentDescripCaps;
@@ -120,7 +159,38 @@ const refineDataObject = () => {
 };
 
 const getImageFromId = (id) => {
-  if (id == 741) {
+  const idString = id.toString();
+  if (idString[0] == "2") {
+    return "../src/img/11d.png";
+  }
+  if (idString[0] == "3") {
+    return "../src/img/09d.png";
+  }
+  if (idString[0] == "5" && idString[1] == "0") {
+    return "../src/img/10d.png";
+  }
+  if (idString[0] == "5" && idString[1] == "1") {
+    return "../src/img/13d.png";
+  }
+  if ((idString[0] == "5" && idString[1] == "2") || idString[1] == "3") {
+    return "../src/img/09d.png";
+  }
+  if (idString[0] == "6") {
+    return "../src/img/13d.png";
+  }
+  if (idString[0] == "7") {
     return "../src/img/50d.png";
+  }
+  if (idString == "800") {
+    return "../src/img/01d.png";
+  }
+  if (idString == "801") {
+    return "../src/img/02d.png";
+  }
+  if (idString == "802") {
+    return "../src/img/03d.png";
+  }
+  if (idString == "803" || idString == "804") {
+    return "../src/img/04d.png";
   }
 };
