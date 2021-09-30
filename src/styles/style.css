@@ -32,10 +32,13 @@ body {
 
 .container {
   display: grid;
-  grid-template-rows: 1fr 1fr 30%;
-  height: auto;
+  /* grid-template-rows: auto auto auto; */
+  grid-template-rows: 1fr 1fr 20%;
+  /* grid-template-rows: 1fr 1fr 30%; */
+  /* height: auto; */
 }
 .upper {
+  grid-row: 1;
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
   align-items: center;
@@ -52,18 +55,23 @@ body {
 
 form {
   grid-row: 1;
-  width: auto;
-  margin: auto;
+  width: 90%;
+  justify-self: center;
+  margin-top: 10px;
+  /* position: fixed; */
+  /* top: 15px; */
+  /* margin: auto; */
 }
 
 .searchbar {
-  font-size: 30px;
+  font-size: 20px;
   grid-row: 1;
-  width: auto;
-  margin-top: 15px;
+  height: 30px;
+  width: 100%;
+  /* margin-top: 15px; */
   background: white url(../img/searchicon.png);
   background-size: 20px;
-  background-position: 10px 8px;
+  background-position: 10px 6px;
   background-repeat: no-repeat;
   padding-left: 35px;
   border-radius: 10px;
@@ -75,7 +83,7 @@ form {
   font-size: 20px;
   grid-row: 2;
   margin-left: 10px;
-  margin-top: 15px;
+  /* margin-top: 15px; */
 }
 
 .city {
@@ -83,10 +91,11 @@ form {
   font-size: 34px;
   grid-row: 3;
   margin-left: 10px;
-  margin-top: 10px;
+  /* margin-top: 10px; */
 }
 
 .lower {
+  grid-row: 2;
   display: grid;
   grid-template-rows: 1fr 20% 1fr;
   grid-template-columns: 1fr 1fr;
