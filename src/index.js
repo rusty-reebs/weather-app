@@ -1,5 +1,7 @@
 import "./styles/style.css";
+
 import { renderHome } from "./home";
+
 import {
   form,
   input,
@@ -11,6 +13,7 @@ import {
   windSpeed,
   currentDescripPic,
 } from "./home";
+
 import {
   tomorrowTemp,
   tomorrowDate,
@@ -59,13 +62,6 @@ const getWeather = async (lat, lon, unitName) => {
   console.log(weatherData);
 };
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  masterFunc(input.value);
-  cityName = input.value;
-  form.reset();
-});
-
 const masterFunc = async (cityname) => {
   await getCityLatLon(cityname);
   await getWeather(cityLat, cityLon, unitName);
@@ -88,7 +84,15 @@ const masterFunc = async (cityname) => {
   changeUnits.innerHTML = "Click to change units to " + reverseUnit + ".";
 };
 
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  masterFunc(input.value);
+  cityName = input.value;
+  form.reset();
+});
+
 changeUnits.addEventListener("click", () => {
+  //? could call a changeUnits function?
   console.log("click!"); //TODO adjust width of <a> element
   isMetric = isMetric ? false : true;
   unitName = isMetric ? "metric" : "imperial";
@@ -116,15 +120,30 @@ const capitalizeString = (data) => {
   return wordStringCaps;
 };
 
-let refinedAppData = {};
+let refinedAppData = {}; //? can name below function this object and then use this.currentTime etc?
+
+// weatherData time UTC
+// subtract local offset
 
 const refineDataObject = () => {
-  const timeZoneOffset = weatherData.timezone_offset;
-  console.log(timeZoneOffset);
-  const unixLocalTime = weatherData.current.dt * 1000;
-  console.log(unixLocalTime);
-  const unixUTCTime = unixLocalTime + timeZoneOffset;
-  console.log(unixUTCTime);
+  const rawCurrentTime = weatherData.current.dt * 1000;
+  const timeZoneOffset = weatherData.timezone_offset * 1000;
+  console.log("time at location", rawCurrentTime);
+  console.log("offset", timeZoneOffset);
+  const currentTime = new Date(weatherData.current.dt * 1000);
+  const localTime = new Date();
+  const localOffset = localTime.getTimezoneOffset();
+  const localOffsetMilliseconds = localOffset * 60000;
+  console.log("javascript", localOffsetMilliseconds);
+  const adjustedSeconds = rawCurrentTime + timeZoneOffset;
+  const adjustedTime = new Date();
+  adjustedTime.setTime(adjustedSeconds + localOffsetMilliseconds);
+  console.log("adjusted seconds", adjustedTime);
+  const adjustedMonth = adjustedTime.getMonth();
+  const adjustedDay = adjustedTime.getDay();
+  const adjustedHours = adjustedTime.getHours();
+  const adjustedMinutes = adjustedTime.getMinutes();
+  console.log(adjustedMonth, adjustedDay, adjustedHours, adjustedMinutes);
   const currentTemp = makeRoundNumber(weatherData.current.temp);
   const feelsLike = makeRoundNumber(weatherData.current.feels_like);
   const currentDescripCaps = capitalizeString(
@@ -165,7 +184,7 @@ const refineDataObject = () => {
     weatherData.daily[2].weather[0].description
   );
 
-  refinedAppData.currentTime = unixUTCTime;
+  refinedAppData.currentTime = currentTime;
   refinedAppData.currentTemp = currentTemp;
   refinedAppData.feelsLike = feelsLike;
   refinedAppData.currentDescrip = currentDescripCaps;
