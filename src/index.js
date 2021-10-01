@@ -18,10 +18,17 @@ import {
   nextDayTemp,
   nextDayDate,
   nextDayPic,
+  changeUnits,
 } from "./home";
 
+let cityName;
 let cityLat;
 let cityLon;
+let isMetric = true;
+let unitName = "metric";
+let unitSymbol = "C";
+let windSymbol = " km/hr";
+let reverseUnit = "imperial";
 
 const getCityLatLon = async (city) => {
   const response = await fetch(
@@ -38,46 +45,60 @@ const getCityLatLon = async (city) => {
 };
 
 let weatherData;
-const getWeather = async (lat, lon) => {
+const getWeather = async (lat, lon, unitName) => {
   const response = await fetch(
     "https://api.openweathermap.org/data/2.5/onecall?lat=" +
       lat +
       "&lon=" +
       lon +
-      "&exclude=minutely,hourly,alerts&appid=6b4c0c8f44c78b121ce431a160d2ae88&units=metric",
+      "&exclude=minutely,hourly,alerts&appid=6b4c0c8f44c78b121ce431a160d2ae88&units=" +
+      unitName,
     { mode: "cors" }
   );
   weatherData = await response.json();
   console.log(weatherData);
 };
 
-renderHome();
-
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   masterFunc(input.value);
+  cityName = input.value;
   form.reset();
 });
 
 const masterFunc = async (cityname) => {
   await getCityLatLon(cityname);
-  await getWeather(cityLat, cityLon);
+  await getWeather(cityLat, cityLon, unitName);
   refineDataObject();
   date.innerHTML = refinedAppData.currentTime;
+  cityname = capitalizeString(cityname);
   city.innerHTML = cityname;
-  currentTemp.innerHTML = refinedAppData.currentTemp + "&deg;" + "C";
+  currentTemp.innerHTML = refinedAppData.currentTemp + "&deg;" + unitSymbol;
   feelsLike.innerHTML =
-    "Feels like " + refinedAppData.feelsLike + "&deg;" + "C";
+    "Feels like " + refinedAppData.feelsLike + "&deg;" + unitSymbol;
   currentDescrip.innerHTML = refinedAppData.currentDescrip;
-  windSpeed.innerHTML = "Wind: " + refinedAppData.windSpeed + " km/h";
+  windSpeed.innerHTML = "Wind: " + refinedAppData.windSpeed + windSymbol;
   currentDescripPic.src = getImageFromId(refinedAppData.currentId);
-  tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + "&deg;" + "C";
+  tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + "&deg;" + unitSymbol;
   tomorrowDate.innerHTML = "Tomorrow";
   tomorrowPic.src = getImageFromId(refinedAppData.tomorrowId);
-  nextDayTemp.innerHTML = refinedAppData.nextDayTemp + "&deg;" + "C";
+  nextDayTemp.innerHTML = refinedAppData.nextDayTemp + "&deg;" + unitSymbol;
   nextDayDate.innerHTML = refinedAppData.nextDayDate;
   nextDayPic.src = getImageFromId(refinedAppData.nextDayId);
+  changeUnits.innerHTML = "Click to change units to " + reverseUnit + ".";
 };
+
+changeUnits.addEventListener("click", () => {
+  console.log("click!"); //TODO adjust width of <a> element
+  isMetric = isMetric ? false : true;
+  unitName = isMetric ? "metric" : "imperial";
+  unitSymbol = isMetric ? "C" : "F";
+  windSymbol = isMetric ? " km/h" : " mph";
+  reverseUnit = isMetric ? "imperial" : "metric";
+  console.log(isMetric);
+  console.log(unitName);
+  masterFunc(cityName);
+});
 
 // functions to refine data
 
@@ -98,8 +119,12 @@ const capitalizeString = (data) => {
 let refinedAppData = {};
 
 const refineDataObject = () => {
-  const currentTime = new Date(weatherData.current.dt * 1000);
-  const refinedCurrentTime = currentTime.toLocaleString();
+  const timeZoneOffset = weatherData.timezone_offset;
+  console.log(timeZoneOffset);
+  const unixLocalTime = weatherData.current.dt * 1000;
+  console.log(unixLocalTime);
+  const unixUTCTime = unixLocalTime + timeZoneOffset;
+  console.log(unixUTCTime);
   const currentTemp = makeRoundNumber(weatherData.current.temp);
   const feelsLike = makeRoundNumber(weatherData.current.feels_like);
   const currentDescripCaps = capitalizeString(
@@ -140,7 +165,7 @@ const refineDataObject = () => {
     weatherData.daily[2].weather[0].description
   );
 
-  refinedAppData.currentTime = refinedCurrentTime;
+  refinedAppData.currentTime = unixUTCTime;
   refinedAppData.currentTemp = currentTemp;
   refinedAppData.feelsLike = feelsLike;
   refinedAppData.currentDescrip = currentDescripCaps;
@@ -194,3 +219,7 @@ const getImageFromId = (id) => {
     return "../src/img/04d.png";
   }
 };
+
+renderHome();
+
+masterFunc("Tbilisi");

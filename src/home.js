@@ -16,6 +16,7 @@ const tomorrowPic = document.createElement("img");
 const nextDayDate = document.createElement("h4");
 const nextDayTemp = document.createElement("h4");
 const nextDayPic = document.createElement("img");
+const changeUnits = document.createElement("a");
 
 const renderHome = () => {
   const content = document.getElementById("content");
@@ -64,6 +65,10 @@ const renderHome = () => {
   nextDayDiv.appendChild(nextDayPic);
   nextDayDiv.appendChild(nextDayTemp);
 
+  const unitsDiv = document.createElement("div");
+  unitsDiv.classList.add("unitsdiv");
+  unitsDiv.appendChild(changeUnits);
+
   container.appendChild(upperDiv);
   upperDiv.appendChild(form);
   upperDiv.appendChild(dateDiv);
@@ -73,6 +78,7 @@ const renderHome = () => {
   lowerDiv.appendChild(currentDescripDiv);
   lowerDiv.appendChild(tomorrowDiv);
   lowerDiv.appendChild(nextDayDiv);
+  container.appendChild(unitsDiv);
 
   content.appendChild(container);
 };
@@ -96,4 +102,5 @@ export {
   nextDayTemp,
   nextDayDate,
   nextDayPic,
+  changeUnits,
 };
