@@ -66,7 +66,7 @@ const masterFunc = async (cityname) => {
   await getCityLatLon(cityname);
   await getWeather(cityLat, cityLon, unitName);
   refineDataObject();
-  date.innerHTML = refinedAppData.currentTime;
+  date.innerHTML = refinedAppData.adjustedTime;
   cityname = capitalizeString(cityname);
   city.innerHTML = cityname;
   currentTemp.innerHTML = refinedAppData.currentTemp + "&deg;" + unitSymbol;
@@ -104,26 +104,7 @@ changeUnits.addEventListener("click", () => {
   masterFunc(cityName);
 });
 
-// functions to refine data
-
-const makeRoundNumber = (data) => {
-  return Math.round(data);
-};
-
-const capitalizeString = (data) => {
-  const wordArray = data.split(" ");
-  const wordStringCaps = wordArray
-    .map((word) => {
-      return word[0].toUpperCase() + word.substring(1);
-    })
-    .join(" ");
-  return wordStringCaps;
-};
-
 let refinedAppData = {}; //? can name below function this object and then use this.currentTime etc?
-
-// weatherData time UTC
-// subtract local offset
 
 const refineDataObject = () => {
   const rawCurrentTime = weatherData.current.dt * 1000;
@@ -139,11 +120,46 @@ const refineDataObject = () => {
   const adjustedTime = new Date();
   adjustedTime.setTime(adjustedSeconds + localOffsetMilliseconds);
   console.log("adjusted seconds", adjustedTime);
-  const adjustedMonth = adjustedTime.getMonth();
-  const adjustedDay = adjustedTime.getDay();
+  let adjustedDay = adjustedTime.getDay();
+  let adjustedDayOfWeek = getDayofWeek(adjustedDay);
+  let adjustedMonth = adjustedTime.getMonth();
+  let adjustedMonthName = getMonthName(adjustedMonth);
+  const adjustedDate = adjustedTime.getDate();
   const adjustedHours = adjustedTime.getHours();
+  const adjusted12Hour = toTwelveHourClock(adjustedHours);
   const adjustedMinutes = adjustedTime.getMinutes();
-  console.log(adjustedMonth, adjustedDay, adjustedHours, adjustedMinutes);
+  const paddedAdjustedMinutes = padAdjustedMinutes(adjustedMinutes);
+  let ampm;
+  adjustedHours >= 12 ? (ampm = "pm") : (ampm = "am");
+
+  console.log(
+    adjustedDay,
+    adjustedMonth,
+    adjustedDate,
+    adjustedHours,
+    adjustedMinutes
+  );
+
+  console.log(
+    adjustedDayOfWeek,
+    adjustedMonthName,
+    adjustedDate,
+    adjusted12Hour,
+    paddedAdjustedMinutes
+  );
+  let adjustedTimeString =
+    adjustedDayOfWeek +
+    ", " +
+    adjustedMonthName +
+    " " +
+    adjustedDate +
+    ", " +
+    adjusted12Hour +
+    ":" +
+    paddedAdjustedMinutes +
+    " " +
+    ampm;
+  console.log(adjustedTimeString);
   const currentTemp = makeRoundNumber(weatherData.current.temp);
   const feelsLike = makeRoundNumber(weatherData.current.feels_like);
   const currentDescripCaps = capitalizeString(
@@ -156,35 +172,16 @@ const refineDataObject = () => {
     weatherData.daily[1].weather[0].description
   );
   const nextDayDate = new Date(weatherData.daily[2].dt * 1000);
-  let nextDayName = nextDayDate.getDay();
-  switch (nextDayName) {
-    case 0:
-      nextDayName = "Sunday";
-      break;
-    case 1:
-      nextDayName = "Monday";
-      break;
-    case 2:
-      nextDayName = "Tuesday";
-      break;
-    case 3:
-      nextDayName = "Wednesday";
-      break;
-    case 4:
-      nextDayName = "Thursday";
-      break;
-    case 5:
-      nextDayName = "Friday";
-      break;
-    case 6:
-      nextDayName = "Saturday";
-  }
+  let nextDayNumber = nextDayDate.getDay();
+  let nextDayDayofWeek = getDayofWeek(nextDayNumber);
+
   const nextDayTemp = makeRoundNumber(weatherData.daily[2].temp.day);
   const nextDayDescripCaps = capitalizeString(
     weatherData.daily[2].weather[0].description
   );
 
   refinedAppData.currentTime = currentTime;
+  refinedAppData.adjustedTime = adjustedTimeString;
   refinedAppData.currentTemp = currentTemp;
   refinedAppData.feelsLike = feelsLike;
   refinedAppData.currentDescrip = currentDescripCaps;
@@ -194,12 +191,110 @@ const refineDataObject = () => {
   refinedAppData.tomorrowTemp = tomorrowTemp;
   refinedAppData.tomorrowDescrip = tomorrowDescripCaps;
   refinedAppData.tomorrowId = weatherData.daily[1].weather[0].id;
-  refinedAppData.nextDayDate = nextDayName;
+  refinedAppData.nextDayDate = nextDayDayofWeek;
   refinedAppData.nextDayTemp = nextDayTemp;
   refinedAppData.nextDayDescrip = nextDayDescripCaps;
   refinedAppData.nextDayId = weatherData.daily[2].weather[0].id;
 
   console.log(refinedAppData);
+};
+
+// functions to refine data
+
+const toTwelveHourClock = (number) => {
+  if (number === 0) {
+    number = 12;
+  } else if (number > 12) {
+    number = number - 12;
+  } else number;
+  return number;
+};
+
+const padAdjustedMinutes = (number) => {
+  return number < 10 ? "0" + number : number;
+};
+
+const makeRoundNumber = (data) => {
+  return Math.round(data);
+};
+
+const capitalizeString = (data) => {
+  const wordArray = data.split(" ");
+  const wordStringCaps = wordArray
+    .map((word) => {
+      return word[0].toUpperCase() + word.substring(1);
+    })
+    .join(" ");
+  return wordStringCaps;
+};
+
+const getMonthName = (number) => {
+  let monthName;
+  switch (number) {
+    case 0:
+      monthName = "January";
+      break;
+    case 1:
+      monthName = "February";
+      break;
+    case 2:
+      monthName = "March";
+      break;
+    case 3:
+      monthName = "April";
+      break;
+    case 4:
+      monthName = "May";
+      break;
+    case 5:
+      monthName = "June";
+      break;
+    case 6:
+      monthName = "July";
+      break;
+    case 7:
+      monthName = "August";
+      break;
+    case 8:
+      monthName = "September";
+      break;
+    case 9:
+      monthName = "October";
+      break;
+    case 10:
+      monthName = "November";
+      break;
+    case 11:
+      monthName = "December";
+  }
+  return monthName;
+};
+
+const getDayofWeek = (number) => {
+  let dayName;
+  switch (number) {
+    case 0:
+      dayName = "Sunday";
+      break;
+    case 1:
+      dayName = "Monday";
+      break;
+    case 2:
+      dayName = "Tuesday";
+      break;
+    case 3:
+      dayName = "Wednesday";
+      break;
+    case 4:
+      dayName = "Thursday";
+      break;
+    case 5:
+      dayName = "Friday";
+      break;
+    case 6:
+      dayName = "Saturday";
+  }
+  return dayName;
 };
 
 const getImageFromId = (id) => {
