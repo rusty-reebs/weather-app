@@ -24,7 +24,9 @@ import {
   changeUnits,
 } from "./home";
 
-let cityName;
+let apiError = false;
+let cityDataName;
+let cityName = "Tbilisi";
 let cityLat;
 let cityLon;
 let isMetric = true;
@@ -34,54 +36,74 @@ let windSymbol = " km/hr";
 let reverseUnit = "imperial";
 
 const getCityLatLon = async (city) => {
-  const response = await fetch(
-    "https://api.openweathermap.org/data/2.5/weather?q=" +
-      city +
-      "&appid=6b4c0c8f44c78b121ce431a160d2ae88",
-    { mode: "cors" }
-  );
-  const cityData = await response.json();
-  // console.log(cityData);
-  cityLat = cityData.coord.lat;
-  cityLon = cityData.coord.lon;
-  console.log(cityLat, cityLon);
+  try {
+    const response = await fetch(
+      "https://api.openweathermap.org/data/2.5/weather?q=" +
+        city +
+        "&appid=6b4c0c8f44c78b121ce431a160d2ae88",
+      { mode: "cors" }
+    );
+    const cityData = await response.json();
+    cityDataName = cityData.name;
+    cityLat = cityData.coord.lat;
+    cityLon = cityData.coord.lon;
+    console.log(cityData);
+    console.log(cityLat, cityLon);
+  } catch (error) {
+    apiError = true;
+    showErrorMessage("City not found, try again.");
+    //! try to clear the screen?
+  }
+};
+
+const showErrorMessage = (specify) => {
+  input.placeholder = specify;
 };
 
 let weatherData;
 const getWeather = async (lat, lon, unitName) => {
-  const response = await fetch(
-    "https://api.openweathermap.org/data/2.5/onecall?lat=" +
-      lat +
-      "&lon=" +
-      lon +
-      "&exclude=minutely,hourly,alerts&appid=6b4c0c8f44c78b121ce431a160d2ae88&units=" +
-      unitName,
-    { mode: "cors" }
-  );
-  weatherData = await response.json();
-  console.log(weatherData);
+  try {
+    const response = await fetch(
+      "https://api.openweathermap.org/data/2.5/onecall?lat=" +
+        lat +
+        "&lon=" +
+        lon +
+        "&exclude=minutely,hourly,alerts&appid=6b4c0c8f44c78b121ce431a160d2ae88&units=" +
+        unitName,
+      { mode: "cors" }
+    );
+    weatherData = await response.json();
+    console.log(weatherData);
+  } catch (error) {
+    showErrorMessage("Sorry, try again.");
+  }
 };
 
 const masterFunc = async (cityname) => {
   await getCityLatLon(cityname);
   await getWeather(cityLat, cityLon, unitName);
-  refineDataObject();
-  date.innerHTML = refinedAppData.adjustedTime;
-  cityname = capitalizeString(cityname);
-  city.innerHTML = cityname;
-  currentTemp.innerHTML = refinedAppData.currentTemp + "&deg;" + unitSymbol;
-  feelsLike.innerHTML =
-    "Feels like " + refinedAppData.feelsLike + "&deg;" + unitSymbol;
-  currentDescrip.innerHTML = refinedAppData.currentDescrip;
-  windSpeed.innerHTML = "Wind " + refinedAppData.windSpeed + windSymbol;
-  currentDescripPic.src = getImageFromId(refinedAppData.currentId, true);
-  tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + "&deg;" + unitSymbol;
-  tomorrowDate.innerHTML = "Tomorrow";
-  tomorrowPic.src = getImageFromId(refinedAppData.tomorrowId);
-  nextDayTemp.innerHTML = refinedAppData.nextDayTemp + "&deg;" + unitSymbol;
-  nextDayDate.innerHTML = refinedAppData.nextDayDate;
-  nextDayPic.src = getImageFromId(refinedAppData.nextDayId);
-  changeUnits.innerHTML = "Click to change units to " + reverseUnit + ".";
+  if (apiError) {
+    apiError = false;
+    return;
+  } else {
+    refineDataObject();
+    date.innerHTML = refinedAppData.adjustedTime;
+    cityname = capitalizeString(cityname);
+    city.innerHTML = cityname;
+    currentTemp.innerHTML = refinedAppData.currentTemp + "&deg;" + unitSymbol;
+    feelsLike.innerHTML =
+      "Feels like " + refinedAppData.feelsLike + "&deg;" + unitSymbol;
+    currentDescrip.innerHTML = refinedAppData.currentDescrip;
+    windSpeed.innerHTML = "Wind " + refinedAppData.windSpeed + windSymbol;
+    currentDescripPic.src = getImageFromId(refinedAppData.currentId, true);
+    tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + "&deg;" + unitSymbol;
+    tomorrowDate.innerHTML = "Tomorrow";
+    tomorrowPic.src = getImageFromId(refinedAppData.tomorrowId);
+    nextDayTemp.innerHTML = refinedAppData.nextDayTemp + "&deg;" + unitSymbol;
+    nextDayDate.innerHTML = refinedAppData.nextDayDate;
+    nextDayPic.src = getImageFromId(refinedAppData.nextDayId);
+    changeUnits.innerHTML = "Click to change units to " + reverseUnit + ".";
+  }
 };
 
 form.addEventListener("submit", (e) => {
@@ -89,6 +111,7 @@ form.addEventListener("submit", (e) => {
   masterFunc(input.value);
   cityName = input.value;
   form.reset();
+  input.placeholder = "";
 });
 
 changeUnits.addEventListener("click", () => {
@@ -390,4 +413,4 @@ const getImageFromId = (id, today) => {
 
 renderHome();
 
-masterFunc("Tbilisi");
+masterFunc(cityName);
