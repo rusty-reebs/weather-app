@@ -9,7 +9,7 @@ const currentTemp = document.createElement("h1");
 const feelsLike = document.createElement("p");
 const currentDescrip = document.createElement("h4");
 const currentDescripPic = document.createElement("img");
-const windSpeed = document.createElement("h4");
+const windSpeed = document.createElement("p");
 const tomorrowDate = document.createElement("h4");
 const tomorrowTemp = document.createElement("h4");
 const tomorrowPic = document.createElement("img");
@@ -41,7 +41,9 @@ const renderHome = () => {
   const currentTempDiv = document.createElement("div");
   currentTempDiv.classList.add("temp");
   feelsLike.classList.add("feelslike");
+  windSpeed.classList.add("windspeed");
   currentTempDiv.appendChild(currentTemp);
+  currentTempDiv.appendChild(windSpeed);
   currentTempDiv.appendChild(feelsLike);
 
   const currentDescripDiv = document.createElement("div");
@@ -49,7 +51,7 @@ const renderHome = () => {
   currentDescripPic.height = "100";
   currentDescripDiv.appendChild(currentDescripPic);
   currentDescripDiv.appendChild(currentDescrip);
-  currentDescripDiv.appendChild(windSpeed);
+  // currentDescripDiv.appendChild(windSpeed);
 
   const tomorrowDiv = document.createElement("div");
   tomorrowDiv.classList.add("tomorrow");

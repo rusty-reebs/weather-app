@@ -73,8 +73,8 @@ const masterFunc = async (cityname) => {
   feelsLike.innerHTML =
     "Feels like " + refinedAppData.feelsLike + "&deg;" + unitSymbol;
   currentDescrip.innerHTML = refinedAppData.currentDescrip;
-  windSpeed.innerHTML = "Wind: " + refinedAppData.windSpeed + windSymbol;
-  currentDescripPic.src = getImageFromId(refinedAppData.currentId);
+  windSpeed.innerHTML = "Wind " + refinedAppData.windSpeed + windSymbol;
+  currentDescripPic.src = getImageFromId(refinedAppData.currentId, true);
   tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + "&deg;" + unitSymbol;
   tomorrowDate.innerHTML = "Tomorrow";
   tomorrowPic.src = getImageFromId(refinedAppData.tomorrowId);
@@ -180,6 +180,9 @@ const refineDataObject = () => {
     weatherData.daily[2].weather[0].description
   );
 
+  refinedAppData.rawCurrentTime = rawCurrentTime;
+  refinedAppData.rawSunsetTime = weatherData.current.sunset * 1000;
+  refinedAppData.rawSunriseTime = weatherData.current.sunrise * 1000;
   refinedAppData.currentTime = currentTime;
   refinedAppData.adjustedTime = adjustedTimeString;
   refinedAppData.currentTemp = currentTemp;
@@ -206,7 +209,8 @@ const toTwelveHourClock = (number) => {
     number = 12;
   } else if (number > 12) {
     number = number - 12;
-  } else number;
+  }
+  // } else number;
   return number;
 };
 
@@ -297,40 +301,90 @@ const getDayofWeek = (number) => {
   return dayName;
 };
 
-const getImageFromId = (id) => {
+const getImageFromId = (id, today) => {
+  // if today is false then render day weather icons
   const idString = id.toString();
   if (idString[0] == "2") {
-    return "../src/img/11d.png";
+    return "../src/img/new11d.png";
   }
-  if (idString[0] == "3") {
-    return "../src/img/09d.png";
+  if (
+    (idString[0] == "3" &&
+      refinedAppData.rawCurrentTime > refinedAppData.rawSunsetTime &&
+      today) ||
+    (idString[0] == "3" &&
+      refinedAppData.rawCurrentTime < refinedAppData.rawSunriseTime &&
+      today)
+  ) {
+    return "../src/img/new09n.png";
+  } else if (idString[0] == "3") {
+    return "../src/img/new09d.png";
   }
   if (idString[0] == "5" && idString[1] == "0") {
-    return "../src/img/10d.png";
+    return "../src/img/new10d.png";
   }
   if (idString[0] == "5" && idString[1] == "1") {
-    return "../src/img/13d.png";
+    return "../src/img/new13d.png";
   }
-  if ((idString[0] == "5" && idString[1] == "2") || idString[1] == "3") {
-    return "../src/img/09d.png";
+  if (
+    (idString[0] == "5" &&
+      idString[1] == "2" &&
+      refinedAppData.rawCurrentTime > refinedAppData.rawSunsetTime &&
+      today) ||
+    (idString[0] == "5" &&
+      idString[1] == "2" &&
+      refinedAppData.rawCurrentTime < refinedAppData.rawSunriseTime &&
+      today) ||
+    (idString[0] == "5" &&
+      idString[1] == "3" &&
+      refinedAppData.rawCurrentTime > refinedAppData.rawSunsetTime &&
+      today) ||
+    (idString[0] == "5" &&
+      idString[1] == "3" &&
+      refinedAppData.rawCurrentTime < refinedAppData.rawSunriseTime &&
+      today)
+  ) {
+    return "../src/img/new09n.png";
+  } else if (
+    (idString[0] == "5" && idString[1] == "2") ||
+    (idString[0] == "5" && idString[1] == "3")
+  ) {
+    return "../src/img/new09d.png";
   }
   if (idString[0] == "6") {
-    return "../src/img/13d.png";
+    return "../src/img/new13d.png";
   }
   if (idString[0] == "7") {
-    return "../src/img/50d.png";
+    return "../src/img/new50d.png";
   }
-  if (idString == "800") {
-    return "../src/img/01d.png";
+  if (
+    (idString == "800" &&
+      refinedAppData.rawCurrentTime > refinedAppData.rawSunsetTime &&
+      today) ||
+    (idString == "800" &&
+      refinedAppData.rawCurrentTime < refinedAppData.rawSunriseTime &&
+      today)
+  ) {
+    return "../src/img/new01n.png";
+  } else if (idString == "800") {
+    return "../src/img/new01d.png";
   }
-  if (idString == "801") {
-    return "../src/img/02d.png";
+  if (
+    (idString == "801" &&
+      refinedAppData.rawCurrentTime > refinedAppData.rawSunsetTime &&
+      today) ||
+    (idString == "801" &&
+      refinedAppData.rawCurrentTime < refinedAppData.rawSunriseTime &&
+      today)
+  ) {
+    return "../src/img/new02n.png";
+  } else if (idString == "801") {
+    return "../src/img/new02d.png";
   }
   if (idString == "802") {
-    return "../src/img/03d.png";
+    return "../src/img/new03d.png";
   }
   if (idString == "803" || idString == "804") {
-    return "../src/img/04d.png";
+    return "../src/img/new03d.png";
   }
 };
 
