@@ -52,7 +52,6 @@ const getCityLatLon = async (city) => {
   } catch (error) {
     apiError = true;
     showErrorMessage("City not found, try again.");
-    //! try to clear the screen?
   }
 };
 
@@ -75,6 +74,7 @@ const getWeather = async (lat, lon, unitName) => {
     weatherData = await response.json();
     console.log(weatherData);
   } catch (error) {
+    apiError = true; //! haven't tested this
     showErrorMessage("Sorry, try again.");
   }
 };
@@ -328,7 +328,7 @@ const getImageFromId = (id, today) => {
   // if today is false then render day weather icons
   const idString = id.toString();
   if (idString[0] == "2") {
-    return "../src/img/new11d.png";
+    return "./img/new11d.png";
   }
   if (
     (idString[0] == "3" &&
@@ -338,15 +338,15 @@ const getImageFromId = (id, today) => {
       refinedAppData.rawCurrentTime < refinedAppData.rawSunriseTime &&
       today)
   ) {
-    return "../src/img/new09n.png";
+    return "./img/new09n.png";
   } else if (idString[0] == "3") {
-    return "../src/img/new09d.png";
+    return "./img/new09d.png";
   }
   if (idString[0] == "5" && idString[1] == "0") {
-    return "../src/img/new10d.png";
+    return "./img/new10d.png";
   }
   if (idString[0] == "5" && idString[1] == "1") {
-    return "../src/img/new13d.png";
+    return "./img/new13d.png";
   }
   if (
     (idString[0] == "5" &&
@@ -366,18 +366,18 @@ const getImageFromId = (id, today) => {
       refinedAppData.rawCurrentTime < refinedAppData.rawSunriseTime &&
       today)
   ) {
-    return "../src/img/new09n.png";
+    return "./img/new09n.png";
   } else if (
     (idString[0] == "5" && idString[1] == "2") ||
     (idString[0] == "5" && idString[1] == "3")
   ) {
-    return "../src/img/new09d.png";
+    return "./img/new09d.png";
   }
   if (idString[0] == "6") {
-    return "../src/img/new13d.png";
+    return "./img/new13d.png";
   }
   if (idString[0] == "7") {
-    return "../src/img/new50d.png";
+    return "./img/new50d.png";
   }
   if (
     (idString == "800" &&
@@ -387,9 +387,9 @@ const getImageFromId = (id, today) => {
       refinedAppData.rawCurrentTime < refinedAppData.rawSunriseTime &&
       today)
   ) {
-    return "../src/img/new01n.png";
+    return "./img/new01n.png";
   } else if (idString == "800") {
-    return "../src/img/new01d.png";
+    return "./img/new01d.png";
   }
   if (
     (idString == "801" &&
@@ -399,15 +399,15 @@ const getImageFromId = (id, today) => {
       refinedAppData.rawCurrentTime < refinedAppData.rawSunriseTime &&
       today)
   ) {
-    return "../src/img/new02n.png";
+    return "./img/new02n.png";
   } else if (idString == "801") {
-    return "../src/img/new02d.png";
+    return "./img/new02d.png";
   }
   if (idString == "802") {
-    return "../src/img/new03d.png";
+    return "./img/new03d.png";
   }
   if (idString == "803" || idString == "804") {
-    return "../src/img/new03d.png";
+    return "./img/new03d.png";
   }
 };
 

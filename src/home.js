@@ -29,11 +29,13 @@ const renderHome = () => {
   form.appendChild(input);
 
   const dateDiv = document.createElement("div");
-  date.classList.add("date");
+  dateDiv.classList.add("datediv");
+  // date.classList.add("date");
   dateDiv.appendChild(date);
 
   const cityDiv = document.createElement("div");
-  city.classList.add("city");
+  cityDiv.classList.add("citydiv");
+  // city.classList.add("city");
   cityDiv.appendChild(city);
 
   const lowerDiv = document.createElement("div");
