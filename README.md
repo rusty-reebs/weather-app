@@ -9,8 +9,6 @@
 Date started: September 22, 2021  
 Date completed: October 3, 2021  
 
-**Run webpack to create the `index.html` and `main.js` files in `/dist`.**
-
 Objectives: use APIs and asynchronous JavaScript for a weather app.  
 
 ### Screenshots
