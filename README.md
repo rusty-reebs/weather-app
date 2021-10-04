@@ -4,6 +4,8 @@
 
 **Best viewed on 📱 mobile!**
 
+**See it live at (https://rusty-reebs.github.io/weather-app/)!**  
+
 Date started: September 22, 2021  
 Date completed: October 3, 2021  
 
@@ -14,8 +16,7 @@ Objectives: use APIs and asynchronous JavaScript for a weather app.
 ### Screenshots
 -----
 
-<img src="./src/img/screenshot2.jpg" height="250px">
-<img src="./src/img/screenshot1.jpg" height="250px">
+<img src="./src/img/screenshot2.jpg" height="250px"><img src="./src/img/screenshot1.jpg" height="250px">
 
 ### TIL Things I Learned
 -----
