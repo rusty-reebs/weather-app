@@ -14,7 +14,7 @@ Objectives: use APIs and asynchronous JavaScript for a weather app.
 ### Screenshots
 -----
 
-<img src="./src/img/screenshot2.jpg" height="250px"><img src="./src/img/screenshot1.jpg" height="250px">
+<img src="./src/img/weather-screenshot1.png" height="250px"><img src="./src/img/weather-screenshot2.png" height="250px">
 
 ### TIL Things I Learned
 -----
