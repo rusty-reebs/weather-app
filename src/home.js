@@ -1,6 +1,5 @@
-// renderHome
+// home.js
 
-//? put all these in an object domElements, then export the object?
 const form = document.createElement("form");
 const input = document.createElement("input");
 const city = document.createElement("h2");
@@ -30,12 +29,10 @@ const renderHome = () => {
 
   const dateDiv = document.createElement("div");
   dateDiv.classList.add("datediv");
-  // date.classList.add("date");
   dateDiv.appendChild(date);
 
   const cityDiv = document.createElement("div");
   cityDiv.classList.add("citydiv");
-  // city.classList.add("city");
   cityDiv.appendChild(city);
 
   const lowerDiv = document.createElement("div");
@@ -53,7 +50,6 @@ const renderHome = () => {
   currentDescripPic.height = "100";
   currentDescripDiv.appendChild(currentDescripPic);
   currentDescripDiv.appendChild(currentDescrip);
-  // currentDescripDiv.appendChild(windSpeed);
 
   const tomorrowDiv = document.createElement("div");
   tomorrowDiv.classList.add("tomorrow");

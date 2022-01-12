@@ -47,8 +47,6 @@ const getCityLatLon = async (city) => {
     cityDataName = cityData.name;
     cityLat = cityData.coord.lat;
     cityLon = cityData.coord.lon;
-    console.log(cityData);
-    console.log(cityLat, cityLon);
   } catch (error) {
     apiError = true;
     showErrorMessage("City not found, try again.");
@@ -72,9 +70,8 @@ const getWeather = async (lat, lon, unitName) => {
       { mode: "cors" }
     );
     weatherData = await response.json();
-    console.log(weatherData);
   } catch (error) {
-    apiError = true; //! haven't tested this
+    apiError = true;
     showErrorMessage("Sorry, try again.");
   }
 };
@@ -87,23 +84,27 @@ const masterFunc = async (cityname) => {
     return;
   } else {
     refineDataObject();
-    date.innerHTML = refinedAppData.adjustedTime;
-    cityname = capitalizeString(cityname);
-    city.innerHTML = cityname;
-    currentTemp.innerHTML = refinedAppData.currentTemp + "&deg;" + unitSymbol;
-    feelsLike.innerHTML =
-      "Feels like " + refinedAppData.feelsLike + "&deg;" + unitSymbol;
-    currentDescrip.innerHTML = refinedAppData.currentDescrip;
-    windSpeed.innerHTML = "Wind " + refinedAppData.windSpeed + windSymbol;
-    currentDescripPic.src = getImageFromId(refinedAppData.currentId, true);
-    tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + "&deg;" + unitSymbol;
-    tomorrowDate.innerHTML = "Tomorrow";
-    tomorrowPic.src = getImageFromId(refinedAppData.tomorrowId);
-    nextDayTemp.innerHTML = refinedAppData.nextDayTemp + "&deg;" + unitSymbol;
-    nextDayDate.innerHTML = refinedAppData.nextDayDate;
-    nextDayPic.src = getImageFromId(refinedAppData.nextDayId);
-    changeUnits.innerHTML = "Click to change units to " + reverseUnit + ".";
+    populateElements(cityname);
   }
+};
+
+const populateElements = (cityname) => {
+  date.innerHTML = refinedAppData.adjustedTime;
+  cityname = capitalizeString(cityname);
+  city.innerHTML = cityname;
+  currentTemp.innerHTML = refinedAppData.currentTemp + "&deg;" + unitSymbol;
+  feelsLike.innerHTML =
+    "Feels like " + refinedAppData.feelsLike + "&deg;" + unitSymbol;
+  currentDescrip.innerHTML = refinedAppData.currentDescrip;
+  windSpeed.innerHTML = "Wind " + refinedAppData.windSpeed + windSymbol;
+  currentDescripPic.src = getImageFromId(refinedAppData.currentId, true);
+  tomorrowTemp.innerHTML = refinedAppData.tomorrowTemp + "&deg;" + unitSymbol;
+  tomorrowDate.innerHTML = "Tomorrow";
+  tomorrowPic.src = getImageFromId(refinedAppData.tomorrowId);
+  nextDayTemp.innerHTML = refinedAppData.nextDayTemp + "&deg;" + unitSymbol;
+  nextDayDate.innerHTML = refinedAppData.nextDayDate;
+  nextDayPic.src = getImageFromId(refinedAppData.nextDayId);
+  changeUnits.innerHTML = "Click to change units to " + reverseUnit + ".";
 };
 
 form.addEventListener("submit", (e) => {
@@ -115,15 +116,11 @@ form.addEventListener("submit", (e) => {
 });
 
 changeUnits.addEventListener("click", () => {
-  //? could call a changeUnits function?
-  console.log("click!"); //TODO adjust width of <a> element
   isMetric = isMetric ? false : true;
   unitName = isMetric ? "metric" : "imperial";
   unitSymbol = isMetric ? "C" : "F";
   windSymbol = isMetric ? " km/h" : " mph";
   reverseUnit = isMetric ? "imperial" : "metric";
-  console.log(isMetric);
-  console.log(unitName);
   masterFunc(cityName);
 });
 
@@ -132,17 +129,13 @@ let refinedAppData = {}; //? can name below function this object and then use th
 const refineDataObject = () => {
   const rawCurrentTime = weatherData.current.dt * 1000;
   const timeZoneOffset = weatherData.timezone_offset * 1000;
-  console.log("time at location", rawCurrentTime);
-  console.log("offset", timeZoneOffset);
   const currentTime = new Date(weatherData.current.dt * 1000);
   const localTime = new Date();
   const localOffset = localTime.getTimezoneOffset();
   const localOffsetMilliseconds = localOffset * 60000;
-  console.log("javascript", localOffsetMilliseconds);
   const adjustedSeconds = rawCurrentTime + timeZoneOffset;
   const adjustedTime = new Date();
   adjustedTime.setTime(adjustedSeconds + localOffsetMilliseconds);
-  console.log("adjusted seconds", adjustedTime);
   let adjustedDay = adjustedTime.getDay();
   let adjustedDayOfWeek = getDayofWeek(adjustedDay);
   let adjustedMonth = adjustedTime.getMonth();
@@ -155,21 +148,21 @@ const refineDataObject = () => {
   let ampm;
   adjustedHours >= 12 ? (ampm = "pm") : (ampm = "am");
 
-  console.log(
-    adjustedDay,
-    adjustedMonth,
-    adjustedDate,
-    adjustedHours,
-    adjustedMinutes
-  );
+  // console.log(
+  //   adjustedDay,
+  //   adjustedMonth,
+  //   adjustedDate,
+  //   adjustedHours,
+  //   adjustedMinutes
+  // );
 
-  console.log(
-    adjustedDayOfWeek,
-    adjustedMonthName,
-    adjustedDate,
-    adjusted12Hour,
-    paddedAdjustedMinutes
-  );
+  // console.log(
+  //   adjustedDayOfWeek,
+  //   adjustedMonthName,
+  //   adjustedDate,
+  //   adjusted12Hour,
+  //   paddedAdjustedMinutes
+  // );
   let adjustedTimeString =
     adjustedDayOfWeek +
     ", " +
@@ -233,7 +226,6 @@ const toTwelveHourClock = (number) => {
   } else if (number > 12) {
     number = number - 12;
   }
-  // } else number;
   return number;
 };
 
