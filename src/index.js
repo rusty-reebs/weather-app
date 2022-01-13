@@ -34,6 +34,7 @@ let unitName = "metric";
 let unitSymbol = "C";
 let windSymbol = " km/hr";
 let reverseUnit = "imperial";
+let refinedAppData = {};
 
 const getCityLatLon = async (city) => {
   try {
@@ -124,45 +125,86 @@ changeUnits.addEventListener("click", () => {
   masterFunc(cityName);
 });
 
-let refinedAppData = {}; //? can name below function this object and then use this.currentTime etc?
+// functions to refine data
 
 const refineDataObject = () => {
+  const now = refineCurrentWeatherConditions();
+  const tomorrow = refineTomorrowWeatherConditions();
+  const next = refineNextDayWeatherConditions();
+
+  refinedAppData = {
+    rawCurrentTime: weatherData.current.dt * 1000,
+    rawSunsetTime: weatherData.current.sunset * 1000,
+    rawSunriseTime: weatherData.current.sunrise * 1000,
+    adjustedTime: getTimeString(),
+    currentTemp: now.currentTemp,
+    feelsLike: now.feelsLike,
+    currentDescrip: now.currentDescripCaps,
+    windSpeed: now.windSpeed,
+    currentId: weatherData.current.weather[0].id,
+    tomorrowDate: tomorrow.tomorrowDate,
+    tomorrowTemp: tomorrow.tomorrowTemp,
+    tomorrowDescrip: tomorrow.tomorrowDescripCaps,
+    tomorrowId: weatherData.daily[1].weather[0].id,
+    nextDayDate: next.nextDayDayofWeek,
+    nextDayTemp: next.nextDayTemp,
+    nextDayDescrip: next.nextDayDescripCaps,
+    nextDayId: weatherData.daily[2].weather[0].id,
+  };
+};
+
+const refineCurrentWeatherConditions = () => {
+  const currentTemp = makeRoundNumber(weatherData.current.temp);
+  const feelsLike = makeRoundNumber(weatherData.current.feels_like);
+  const currentDescripCaps = capitalizeString(
+    weatherData.current.weather[0].description
+  );
+  const windSpeed = makeRoundNumber(weatherData.current.wind_speed);
+  return { currentTemp, feelsLike, currentDescripCaps, windSpeed };
+};
+
+const refineTomorrowWeatherConditions = () => {
+  const tomorrowDate = new Date(weatherData.daily[1].dt);
+  const tomorrowTemp = makeRoundNumber(weatherData.daily[1].temp.day);
+  const tomorrowDescripCaps = capitalizeString(
+    weatherData.daily[1].weather[0].description
+  );
+  return { tomorrowDate, tomorrowTemp, tomorrowDescripCaps };
+};
+
+const refineNextDayWeatherConditions = () => {
+  const nextDayDate = new Date(weatherData.daily[2].dt * 1000);
+  let nextDayNumber = nextDayDate.getDay();
+  let nextDayDayofWeek = getDayofWeek(nextDayNumber);
+  const nextDayTemp = makeRoundNumber(weatherData.daily[2].temp.day);
+  const nextDayDescripCaps = capitalizeString(
+    weatherData.daily[2].weather[0].description
+  );
+  return { nextDayDayofWeek, nextDayTemp, nextDayDescripCaps };
+};
+
+const getTimeString = () => {
   const rawCurrentTime = weatherData.current.dt * 1000;
   const timeZoneOffset = weatherData.timezone_offset * 1000;
-  const currentTime = new Date(weatherData.current.dt * 1000);
   const localTime = new Date();
   const localOffset = localTime.getTimezoneOffset();
   const localOffsetMilliseconds = localOffset * 60000;
   const adjustedSeconds = rawCurrentTime + timeZoneOffset;
   const adjustedTime = new Date();
   adjustedTime.setTime(adjustedSeconds + localOffsetMilliseconds);
-  let adjustedDay = adjustedTime.getDay();
-  let adjustedDayOfWeek = getDayofWeek(adjustedDay);
-  let adjustedMonth = adjustedTime.getMonth();
-  let adjustedMonthName = getMonthName(adjustedMonth);
+  const adjustedDay = adjustedTime.getDay();
+  const adjustedDayOfWeek = getDayofWeek(adjustedDay);
+  const adjustedMonth = adjustedTime.getMonth();
+  const adjustedMonthName = getMonthName(adjustedMonth);
   const adjustedDate = adjustedTime.getDate();
   const adjustedHours = adjustedTime.getHours();
   const adjusted12Hour = toTwelveHourClock(adjustedHours);
   const adjustedMinutes = adjustedTime.getMinutes();
   const paddedAdjustedMinutes = padAdjustedMinutes(adjustedMinutes);
+
   let ampm;
   adjustedHours >= 12 ? (ampm = "pm") : (ampm = "am");
 
-  // console.log(
-  //   adjustedDay,
-  //   adjustedMonth,
-  //   adjustedDate,
-  //   adjustedHours,
-  //   adjustedMinutes
-  // );
-
-  // console.log(
-  //   adjustedDayOfWeek,
-  //   adjustedMonthName,
-  //   adjustedDate,
-  //   adjusted12Hour,
-  //   paddedAdjustedMinutes
-  // );
   let adjustedTimeString =
     adjustedDayOfWeek +
     ", " +
@@ -175,50 +217,9 @@ const refineDataObject = () => {
     paddedAdjustedMinutes +
     " " +
     ampm;
-  console.log(adjustedTimeString);
-  const currentTemp = makeRoundNumber(weatherData.current.temp);
-  const feelsLike = makeRoundNumber(weatherData.current.feels_like);
-  const currentDescripCaps = capitalizeString(
-    weatherData.current.weather[0].description
-  );
-  const windSpeed = makeRoundNumber(weatherData.current.wind_speed);
-  const tomorrowDate = new Date(weatherData.daily[1].dt);
-  const tomorrowTemp = makeRoundNumber(weatherData.daily[1].temp.day);
-  const tomorrowDescripCaps = capitalizeString(
-    weatherData.daily[1].weather[0].description
-  );
-  const nextDayDate = new Date(weatherData.daily[2].dt * 1000);
-  let nextDayNumber = nextDayDate.getDay();
-  let nextDayDayofWeek = getDayofWeek(nextDayNumber);
 
-  const nextDayTemp = makeRoundNumber(weatherData.daily[2].temp.day);
-  const nextDayDescripCaps = capitalizeString(
-    weatherData.daily[2].weather[0].description
-  );
-
-  refinedAppData.rawCurrentTime = rawCurrentTime;
-  refinedAppData.rawSunsetTime = weatherData.current.sunset * 1000;
-  refinedAppData.rawSunriseTime = weatherData.current.sunrise * 1000;
-  refinedAppData.currentTime = currentTime;
-  refinedAppData.adjustedTime = adjustedTimeString;
-  refinedAppData.currentTemp = currentTemp;
-  refinedAppData.feelsLike = feelsLike;
-  refinedAppData.currentDescrip = currentDescripCaps;
-  refinedAppData.windSpeed = windSpeed;
-  refinedAppData.currentId = weatherData.current.weather[0].id;
-  refinedAppData.tomorrowDate = tomorrowDate;
-  refinedAppData.tomorrowTemp = tomorrowTemp;
-  refinedAppData.tomorrowDescrip = tomorrowDescripCaps;
-  refinedAppData.tomorrowId = weatherData.daily[1].weather[0].id;
-  refinedAppData.nextDayDate = nextDayDayofWeek;
-  refinedAppData.nextDayTemp = nextDayTemp;
-  refinedAppData.nextDayDescrip = nextDayDescripCaps;
-  refinedAppData.nextDayId = weatherData.daily[2].weather[0].id;
-
-  console.log(refinedAppData);
+  return adjustedTimeString;
 };
-
-// functions to refine data
 
 const toTwelveHourClock = (number) => {
   if (number === 0) {
